@@ -1,0 +1,225 @@
+// Importación de estilos abstractos
+@use "./abstract" as *;
+
+// Estilos globales para el cuerpo del documento
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    overflow: hidden;
+    background-color: rgb(223, 223, 223, 0.5) !important;
+}
+
+// Estilos para el reloj analógico
+.reloj {
+        position: relative;
+    width: 150px;
+    height: 150px;
+    border: 3px solid $DAW;
+    border-radius: 50%;
+    margin: 50px auto;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+}
+
+// Estilos para los marcadores del reloj
+.marcador {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: $DAW;
+}
+
+// Marcador superior
+.arriba {
+    top: 0;
+}
+
+// Marcador inferior
+.abajo {
+    bottom: 0;
+}
+
+// Marcador izquierdo
+.izquierda {
+    left: 0;
+    top: 50%;
+}
+
+// Marcador derecho
+.derecha {
+    right: 0;
+    top: 50%;
+}
+
+// Estilos base para las agujas del reloj
+.aguja {
+    position: absolute;
+    width: 2px;
+    transform-origin: bottom center; 
+    transform: rotate(0deg);
+
+    // Aguja de los minutos
+    &-minutos {
+        @extend .aguja;
+        background-color: $DAM;
+        height: 55px;
+        top: 20px;
+        left: 50%;
+        animation: rotar-aguja 2s linear infinite;
+    }
+
+    // Aguja de las horas
+    &-horas {
+        @extend .aguja;
+        background-color: $DAW;
+        height: 40px;
+        top: 35px;
+        left: 50%;
+        animation: rotar-aguja 24s linear infinite;
+    }
+}
+
+// Animación para rotar las agujas del reloj
+@keyframes rotar-aguja {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Estilos para la sección de grados
+.grados {
+    margin-top: 200px;
+    gap: 10px;
+}
+
+// Estilo para el título "GRADOS"
+h3 {
+    color: $GRADOS !important;
+    text-decoration: underline;
+}
+
+// Estilo para el texto "DAM"
+.dam {
+    color: $DAM;
+}
+
+// Estilo para el texto "DAW"
+.daw {
+    color: $DAW;
+}
+
+// Estilos para la sección principal de estadísticas
+.estadisticas {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+}
+
+// Estilos para el título principal
+.titulo {
+    height: 20%;
+}
+
+// Estilos específicos del texto del título
+.titulo h1 {
+    color: #009ab7;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+// Contenedor del gráfico de barras
+.chart-container {
+    height: 80%;
+    padding: 0 20px 20px;
+}
+
+// Estilos para el gráfico de barras
+.chart {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(100, 1fr);
+    grid-column-gap: 10px;
+    height: 100%;
+    width: 100%;
+    padding: 5px 10px;
+    justify-content: center;
+    grid-area: grafico;
+}
+
+// Estilos base para las barras del gráfico
+[class*="bar"] {
+    border-radius: 5px 5px 0 0;
+    grid-row-start: 1;
+    grid-row-end: 101;
+    position: relative;
+    transform-origin: bottom;
+    animation: escalar-barras 1s ease-out;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10px;
+}
+
+// Estilo para las barras impares
+[class*="bar"]:nth-child(odd) {
+    background-color: $DAM;
+}
+
+// Estilo para las barras pares
+[class*="bar"]:nth-child(even) {
+    background-color: $DAW;
+}
+
+// Estilo para el texto dentro de las barras
+[class*="bar"] p {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+// Efecto hover para las barras
+[class*="bar"]:hover {
+    transform: scale(1.1);
+    transform-origin: bottom;
+}
+
+// Efecto hover para el texto dentro de las barras
+[class*="bar"]:hover p {
+    opacity: 1;
+}
+
+// Variables y mixins para el gráfico de barras
+$totalRows: 100;
+
+// Mixin para calcular la posición de las barras
+@mixin chartValue($data) {
+    $result: $totalRows - $data;
+    grid-row-start: $result;
+}
+
+// Generación dinámica de clases para las barras
+@for $i from 1 through $totalRows {
+    .bar-#{$i} {
+        $valor: ($i);
+        @include chartValue($i);
+    }
+}
+
+// Animación para escalar las barras
+@keyframes escalar-barras {
+    0% {
+        transform: scaleY(0);
+    }
+    100% {
+        transform: scaleY(1);
+    }
+}
